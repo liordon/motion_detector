@@ -49,6 +49,7 @@ def forward_video_to_pipe(video_feed, pipe):
         if counter > 30:
             break
         
+    video_feed.stop() if "stop" in dir(video_feed) is None else video_feed.release()
     print("streamer finished writing")
     os.close(pipe)
 

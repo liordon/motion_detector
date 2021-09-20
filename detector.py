@@ -60,8 +60,8 @@ def detect_from_stream(input_pipe, output_pipe):
             # and update the text
             (x, y, w, h) = cv2.boundingRect(c)
             motion_rectangles += [((x,y),(x + w, y + h))]
-        print(motion_rectangles)
-        frame_and_detections=frame_to_string(gray_frame) + "," + str(motion_rectangles)+'\n'
+        #print(motion_rectangles)
+        frame_and_detections=frame_to_string(gray_frame) + "|" + str(motion_rectangles)+'\n'
 
         os.write(output_pipe, bytes(frame_and_detections,
             encoding='utf-8'))

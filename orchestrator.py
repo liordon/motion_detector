@@ -3,6 +3,7 @@ import sys
 from utils import *
 import streamer
 import detector
+import presenter
 
 camera_feed_reader, camera_feed_writer = os.pipe()
 detection_reader, detection_writer = os.pipe()
@@ -42,7 +43,7 @@ else: # child becomes presenter
     os.close(camera_feed_reader)
     os.close(camera_feed_writer)
     os.close(detection_writer)
-    consume(detection_reader)
+    presenter.present_annotated_frames_from_stream(detection_reader)
     print("presenter finished presenting")
 
 print("done")

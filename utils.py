@@ -20,17 +20,8 @@ def _pixel_line_to_string(pixel_line):
     return '[' + ','.join([str(pixel) for pixel in pixel_line]) + ']'
 
 def frame_to_string(pixel_array):
-    f = open("tmp", 'w')
-    json.dump(pixel_array.tolist(), f)
     return json.dumps(pixel_array.tolist())
-    #return str(pixel_array.dumps())
-    #return str(pickle.dumps(pixel_array, protocol=0))
-    #return '[' + ','.join([_pixel_line_to_string(pixel_line) for
-    #    pixel_line in pixel_array]) + ']'
     
 def string_to_frame(serialized_frame):
     deserial = json.loads(serialized_frame)
-    #print(type(deserial))
     return np.asarray(deserial, dtype='float')
-    #return np.loads(bytes(serialized_frame[:-1],
-    #    encoding='utf-8'))
