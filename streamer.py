@@ -23,14 +23,13 @@ def open_video_feed(video_path:str):
 
 
 
-def forward_video_to_pipe(video_feed, pipe):
+def forward_video_to_pipe(video_path:str, pipe):
+    video_feed = open_video_feed(video_path)
     counter = 0
     # loop over the frames of the video
     while True:
         # grab the current frame and initialize the occupied/unoccupied
-        # text
         frame = video_feed.read()[1]
-        ###~~~~~~print(frame)
         #frame = frame if args.get("video", None) is None else frame[1]
 
         # if the frame could not be grabbed, then we have reached the end
@@ -42,16 +41,14 @@ def forward_video_to_pipe(video_feed, pipe):
         frame = imutils.resize(frame, width=500)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
-        ###~~~~~print(gray)
-        os.write(pipe, bytes(frame_to_string(gray)+'\n', encoding='utf-8'))
-        #os.write(pipe, frame_to_string(gray))
+        pipe.send(frame_to_string(gray)+'\n')
         counter+=1
-        if counter > 30:
-            break
+        # if counter > 30:
+        #     break
         
     video_feed.stop() if "stop" in dir(video_feed) is None else video_feed.release()
     print("streamer finished writing")
-    os.close(pipe)
+    pipe.close()
 
 
 if __name__=="__main__":
