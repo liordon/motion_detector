@@ -4,12 +4,9 @@ from multiprocessing.spawn import freeze_support
 import detector
 import presenter
 import streamer
-from utils import *
 
 if __name__ == '__main__':
     freeze_support()
-    camera_feed_reader, camera_feed_writer = os.pipe()
-    detection_reader, detection_writer = os.pipe()
     camera_feed_reader, camera_feed_writer = Pipe(False)
     detection_reader, detection_writer = Pipe(False)
 
@@ -25,5 +22,3 @@ if __name__ == '__main__':
     streamer_process.join()
     detector_process.join()
     presenter_process.join()
-
-print("done")

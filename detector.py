@@ -1,7 +1,12 @@
+import cv2
 import imutils
 import psutil
-import cv2
+
 from utils import *
+
+
+def detector_log(message: str):
+    log("DTCT", message)
 
 
 def detect_from_stream(input_pipe, output_pipe, pid):
@@ -18,10 +23,11 @@ def detect_from_stream(input_pipe, output_pipe, pid):
                 continue
 
         gray_frame = string_to_frame(frame_string)
+        gray_frame = cv2.GaussianBlur(gray_frame, (21, 21), 0)
 
         # if the first frame is None, initialize it
         if firstFrame is None:
-            print("[DET-INFO] starting background model...")
+            detector_log("starting background model...")
             firstFrame = gray_frame.copy().astype("float")
             continue
 
@@ -55,5 +61,5 @@ def detect_from_stream(input_pipe, output_pipe, pid):
 
         output_pipe.send(frame_and_detections)
 
-    print("finished detecting " + str(counter) + "frames")
+    detector_log("finished detecting " + str(counter) + " frames")
     output_pipe.close()
