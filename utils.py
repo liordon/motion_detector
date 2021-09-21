@@ -31,5 +31,6 @@ def string_to_frame(serialized_frame):
     deserial = json.loads(serialized_frame)
     return np.asarray(deserial, dtype='float')
 
-def log(component:str, message:str):
+
+def log(component: str, message: str):
     print("[{}] - {}".format(component, message))

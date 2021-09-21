@@ -32,7 +32,6 @@ def present_annotated_frames_from_stream(pipe_reader, pid):
         for (bottom_left_corner, top_right_corner) in ast.literal_eval(annotations):
             blur_mask = np.ones(gray_frame.shape, dtype=np.uint8)
             cv2.rectangle(blur_mask, bottom_left_corner, top_right_corner, 0, thickness=-1)
-            # blur_mask = cv2.circle(blur_mask, bottom_left_corner, top_right_corner, np.array([255, 255, 255]), thickness=-1)
             gray_frame = np.where(np.logical_not(blur_mask), blurred_frame, gray_frame)
             cv2.rectangle(gray_frame, bottom_left_corner, top_right_corner, (0, 255, 0), 2)
 

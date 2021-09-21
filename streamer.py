@@ -1,6 +1,3 @@
-import argparse
-import time
-
 import cv2
 import imutils
 from imutils.video import VideoStream
@@ -8,8 +5,9 @@ from imutils.video import VideoStream
 from utils import *
 
 
-def streamer_log(message:str):
+def streamer_log(message: str):
     log("STRM", message)
+
 
 def open_video_feed(video_path: str):
     # if the video argument is None, then we are reading from webcam
@@ -31,8 +29,8 @@ def forward_video_to_pipe(video_path: str, pipe):
     # loop over the frames of the video
     while True:
         # grab the current frame and initialize the occupied/unoccupied
-        frame = video_feed.read()[1]
-        # frame = frame if args.get("video", None) is None else frame[1]
+        frame = video_feed.read()
+        frame = frame if video_path is None else frame[1]
 
         # if the frame could not be grabbed, then we have reached the end
         # of the video
@@ -52,16 +50,23 @@ def forward_video_to_pipe(video_path: str, pipe):
 
 if __name__ == "__main__":
     # construct the argument parser and parse the arguments
+    import argparse
+    import os
+
     ap = argparse.ArgumentParser()
     ap.add_argument("-v", "--video", help="path to the video file")
+    ap.add_argument("-p", "--pipe", help="path to the pipe to stream frames into")
     ap.add_argument("-a", "--min-area", type=int, default=500, help="minimum area size")
     args = vars(ap.parse_args())
 
-    video_feed = open_video_feed(args.get("video", None))
+    pipe_name = args.get("pipe")
+    pipe_name = "camStream.pipe" if pipe_name is None else pipe_name
+    if not os.path.exists(pipe_name):
+        os.mkfifo(path=pipe_name)
+    pipe_writer = open(pipe_name, 'w')
 
-    test_pipe_reader, test_pipe_writer = os.pipe()
-    if os.fork() > 0:
-        forward_video_to_pipe(video_feed, test_pipe_writer)
-    else:
-        os.close(test_pipe_writer)
-        present(test_pipe_reader)
+    streamer_log("video stream is open")
+    forward_video_to_pipe(args.get("video", None), pipe_writer)
+    os.close(pipe_writer)
+    os.remove(pipe_name)
+    streamer_log("video stream is closed")
