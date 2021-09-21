@@ -8,7 +8,7 @@ def detect_from_stream(input_pipe, output_pipe, pid):
     counter = 0
     firstFrame = None
 
-    while psutil.pid_exists(pid):
+    while input_pipe.poll(3) or psutil.pid_exists(pid):
         frame_string = input_pipe.recv()
         counter += 1
         if frame_string is None or frame_string == '':
@@ -51,9 +51,9 @@ def detect_from_stream(input_pipe, output_pipe, pid):
             # and update the text
             (x, y, w, h) = cv2.boundingRect(c)
             motion_rectangles += [((x, y), (x + w, y + h))]
-        frame_and_detections = frame_to_string(gray_frame) + "|" + str(motion_rectangles) + '\n'
+        frame_and_detections = frame_string + "|" + str(motion_rectangles) + '\n'
 
         output_pipe.send(frame_and_detections)
 
-    print("finished detecting")
+    print("finished detecting " + str(counter) + "frames")
     output_pipe.close()

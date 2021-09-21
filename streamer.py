@@ -43,11 +43,9 @@ def forward_video_to_pipe(video_path:str, pipe):
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
         pipe.send(frame_to_string(gray)+'\n')
         counter+=1
-        # if counter > 30:
-        #     break
-        
+
     video_feed.stop() if "stop" in dir(video_feed) is None else video_feed.release()
-    print("streamer finished writing")
+    print("streamer finished writing " + str(counter) + "frames")
     pipe.close()
 
 
